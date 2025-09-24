@@ -1,0 +1,12 @@
+Django>=4.0,<5.0
+djangorestframework
+psycopg2-binary
+celery
+redis
+pandas
+openpyxl
+python-dotenv
+gunicorn
+drf-spectacular
+pytest
+pytest-django
