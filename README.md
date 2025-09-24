@@ -100,13 +100,3 @@ credit_approval/
 
 - All environment variables are managed via `.env`.
 - Database, Redis, and other service credentials can be set there.
-
-## Documentation & References
-
-- **OpenAPI docs**: `/docs/`
-- **Assignment checklist**: `CHECKLIST.md`
-- **Sample responses**: `SAMPLE_RESPONSES.md`
-
-## License
-
-This project is for educational/assignment use. See assignment instructions for details.
