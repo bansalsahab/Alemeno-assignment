@@ -17,13 +17,13 @@ def load_customers_from_excel(path):
             for idx, row in df.iterrows():
                 try:
                     customer, created_flag = Customer.objects.update_or_create(
-                        phone_number=str(row['phone_number']),
+                        phone_number=str(row['Phone Number']),
                         defaults={
-                            'first_name': row['first_name'],
-                            'last_name': row['last_name'],
-                            'age': row.get('age'),
-                            'monthly_income': row['monthly_income'],
-                            'approved_limit': round_to_nearest_lakh(Decimal(row['monthly_income']) * 36) if not row.get('approved_limit') else row['approved_limit']
+                            'first_name': row['First Name'],
+                            'last_name': row['Last Name'],
+                            'age': row.get('Age'),
+                            'monthly_income': row['Monthly Salary'],
+                            'approved_limit': row['Approved Limit'] if not pd.isna(row.get('Approved Limit')) else round_to_nearest_lakh(Decimal(row['Monthly Salary']) * 36)
                         }
                     )
                     if created_flag:
@@ -46,20 +46,21 @@ def load_loans_from_excel(path):
         with transaction.atomic():
             for idx, row in df.iterrows():
                 try:
-                    customer = Customer.objects.get(phone_number=str(row['phone_number']))
-                    emi = calculate_emi(Decimal(row['loan_amount']), Decimal(row['annual_interest_rate']), int(row['tenure_months']))
+                    # Find customer by Customer ID (from Excel)
+                    customer = Customer.objects.get(customer_id=int(row['Customer']))
+                    emi = calculate_emi(Decimal(row['Loan Amount']), Decimal(row['Interest Rate']), int(row['Tenure']))
                     loan, created_flag = Loan.objects.update_or_create(
                         customer=customer,
-                        loan_amount=row['loan_amount'],
-                        tenure_months=row['tenure_months'],
+                        loan_amount=row['Loan Amount'],
+                        tenure_months=row['Tenure'],
                         defaults={
-                            'annual_interest_rate': row['annual_interest_rate'],
-                            'monthly_repayment': emi,
-                            'emis_paid_on_time': row['emis_paid_on_time'],
-                            'start_date': row['start_date'],
-                            'end_date': row['end_date'],
-                            'is_active': row['is_active'],
-                            'repayments_left': row['repayments_left']
+                            'annual_interest_rate': row['Interest Rate'],
+                            'monthly_repayment': row['Monthly payment'],
+                            'emis_paid_on_time': row['EMIs paid on Time'],
+                            'start_date': row['Date of Approval'],
+                            'end_date': row['End Date'],
+                            'is_active': True,  # Default to True, or adjust as needed
+                            'repayments_left': 0  # Set to 0 or calculate if needed
                         }
                     )
                     if created_flag:
